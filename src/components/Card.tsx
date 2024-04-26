@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
+import { Vehicle } from '../App'
 import edit from '../assets/edit.svg'
 import x from '../assets/x.svg'
-import { Vehicle } from '../App'
 
 interface CardProps {
 	vehicle: Vehicle
@@ -15,6 +15,7 @@ const Card: React.FC<CardProps> = ({ vehicle, onDelete, onSave }) => {
 	const [editableModel, setEditableModel] = useState(model)
 	const [editablePrice, setEditablePrice] = useState(price)
 	const [isEditing, setIsEditing] = useState(false)
+	const [showSaveButton, setShowSaveButton] = useState(false)
 
 	const handleDelete = () => {
 		onDelete(id)
@@ -22,6 +23,7 @@ const Card: React.FC<CardProps> = ({ vehicle, onDelete, onSave }) => {
 
 	const handleEdit = () => {
 		setIsEditing(true)
+		setShowSaveButton(true)
 	}
 
 	const handleSave = () => {
@@ -33,16 +35,18 @@ const Card: React.FC<CardProps> = ({ vehicle, onDelete, onSave }) => {
 		}
 		onSave(updatedVehicle)
 		setIsEditing(false)
+		setShowSaveButton(false)
 	} // допиать и подкрасить редактирование
 	//=================================================
 	return (
 		<div className='w-3/5 relative border border-slate-100 bg-white rounded-3xl p-8 hover:shadow-xl'>
 			<div className='gap-5'>
-				<h3 style={{ width: 'calc(50% - (2px * 2))' }}>
+				<h3 className='mb-1'>
 					Марка:{' '}
 					<b>
 						{isEditing ? (
 							<input
+								className='border border-sky-500 rounded-md pl-2 hover:border hover:border-sky-500 focus:border-sky-500'
 								type='text'
 								value={editableName}
 								onChange={(e) => setEditableName(e.target.value)}
@@ -52,8 +56,20 @@ const Card: React.FC<CardProps> = ({ vehicle, onDelete, onSave }) => {
 						)}
 					</b>
 				</h3>
-				<p>
-					Модель: <b>{model}</b>
+				<p className='mb-1'>
+					Модель:{' '}
+					<b>
+						{isEditing ? (
+							<input
+								className='border border-sky-500 rounded-md pl-2 hover:border hover:border-sky-500 focus:border-sky-500'
+								type='text'
+								value={editableModel}
+								onChange={(e) => setEditableModel(e.target.value)}
+							/>
+						) : (
+							editableModel
+						)}
+					</b>
 				</p>
 			</div>
 			<div className='flex gap-5'>
@@ -64,16 +80,38 @@ const Card: React.FC<CardProps> = ({ vehicle, onDelete, onSave }) => {
 					Год: <b>{year}</b>
 				</p>
 				<p>
-					Цена: <b>{price}</b>
+					Цена:{' '}
+					<b>
+						{isEditing ? (
+							<input
+								className='border border-sky-500 rounded-md pl-2 hover:border hover:border-sky-500 focus:border-sky-500'
+								type='number'
+								value={editablePrice}
+								onChange={(e) => setEditablePrice(parseInt(e.target.value))}
+							/>
+						) : (
+							editablePrice
+						)}
+					</b>
 				</p>
 			</div>
 			<div className='absolute top-0 right-2 flex cursor-pointer p-1'>
-				<img
-					src={edit}
-					alt=''
-					className='cursor-pointer hover:-translate-y-1 transition'
-					onClick={isEditing ? handleSave : handleEdit}
-				/>
+				{!showSaveButton && (
+					<img
+						src={edit}
+						alt=''
+						className='cursor-pointer hover:-translate-y-1 transition '
+						onClick={handleEdit}
+					/>
+				)}
+				{showSaveButton && (
+					<button
+						className='cursor-pointer hover:-translate-y-1 transition border border-sky-500 rounded-md'
+						onClick={handleSave}
+					>
+						Сохранить
+					</button>
+				)}
 				<img
 					src={x}
 					alt=''
